@@ -49,8 +49,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         PacketGetOnlineClient requestOnlineClient = new PacketGetOnlineClient(PacketType.GET_ONLINE_CLIENT,
                 0,
                 SourceType.CLIENT,
-                connRecv.user.get().getId(),
-                connRecv.socket.getLocalSocketAddress().toString().substring(1));
+                connRecv.user.get().getId());
         connSend.addPacket(requestOnlineClient);
         this.gui = gui;
         this.connRecv = connRecv;
@@ -222,6 +221,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
             this.connRecv.user.get().setId(null);
             this.connRecv.user.get().setUsername(null);
             this.connRecv.user.get().setAuthenticated(false);
+            this.connRecv.user.get().deleteObservers();
             this.gui.setMainPanelTo(new InitPage(gui, connRecv, connSend));
         } catch (IOException ex) {
             JOptionPane.showConfirmDialog(null, "Error IO", "Error", JOptionPane.NO_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -232,8 +232,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         PacketGetOnlineClient requestOnlineClient = new PacketGetOnlineClient(PacketType.GET_ONLINE_CLIENT,
                 0,
                 SourceType.CLIENT,
-                connRecv.user.get().getId(),
-                connRecv.socket.getLocalSocketAddress().toString().substring(1));
+                connRecv.user.get().getId());
         connSend.addPacket(requestOnlineClient);
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 

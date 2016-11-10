@@ -132,8 +132,7 @@ public class InitPage extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
-        //TESTING need to be deleted
-        this.gui.setMainPanelTo(new HomePage(gui, connRecv, connSend));
+        this.gui.setMainPanelTo(new RegisterUI(gui, connRecv, connSend));
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
 

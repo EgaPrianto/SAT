@@ -17,6 +17,10 @@ import java.util.logging.Logger;
 import server.model.db.JDBCMySQLManager;
 import server.model.packet.Packet;
 import server.model.packet.PacketFactory;
+import server.model.packet.PacketGetOnlineClient;
+import server.model.packet.PacketLoginClient;
+import server.model.packet.PacketLoginServer;
+import server.model.packet.PacketRegister;
 
 /**
  *
@@ -43,8 +47,40 @@ public class ConnectionReceiver implements Runnable {
             try {
                 String input = inputReader.readLine();
                 Packet packet = PacketFactory.createPacketFromString(input);
+
                 System.out.println("Packet Builded :" + packet.toString());
-                packetQueue.add(packet);
+                switch (packet.command) {
+                    case LOGIN_CLIENT:
+                        if (packet instanceof PacketLoginClient) {
+                            PacketLoginClient packetLoginClient = (PacketLoginClient) packet;
+                            packetLoginClient.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
+                            packetQueue.add(packetLoginClient);
+                        }
+                        break;
+                    case REGISTER:
+                        if (packet instanceof PacketRegister) {
+                            PacketRegister packetRegister = (PacketRegister) packet;
+                            packetRegister.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
+                            packetQueue.add(packetRegister);
+                        }
+                        break;
+                    case GET_ONLINE_CLIENT:
+                        if (packet instanceof PacketGetOnlineClient) {
+                            PacketGetOnlineClient packetGetOnlineClient=  (PacketGetOnlineClient) packet;
+                            packetGetOnlineClient.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
+                            packetQueue.add(packetGetOnlineClient);
+                        }
+                        break;
+                    case LOGIN_SERVER:
+                        if (packet instanceof PacketLoginServer) {
+                            PacketLoginServer packetLoginServer=  (PacketLoginServer) packet;
+                            packetQueue.add(packetLoginServer);
+                        }
+                        break;
+                    default:
+                        packetQueue.add(packet);
+                        break;
+                }
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }

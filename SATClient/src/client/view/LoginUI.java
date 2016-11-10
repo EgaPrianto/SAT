@@ -129,7 +129,7 @@ public class LoginUI extends javax.swing.JPanel implements Observer {
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        PacketLoginClient toSend = new PacketLoginClient(PacketType.LOGIN_CLIENT, 0, SourceType.CLIENT, this.jTextFieldID.getText(), connRecv.socket.getLocalSocketAddress().toString().substring(1), new String(this.jPasswordField.getPassword()));
+        PacketLoginClient toSend = new PacketLoginClient(PacketType.LOGIN_CLIENT, 0, SourceType.CLIENT, this.jTextFieldID.getText(), new String(this.jPasswordField.getPassword()));
         this.connSend.addPacket(toSend);
         this.jButtonBack.setEnabled(false);
         this.jButtonLogin.setEnabled(false);

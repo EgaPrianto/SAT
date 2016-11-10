@@ -37,17 +37,24 @@ public class TaskRegisterExecutor extends TaskExecutor {
         try {
             PacketRegister receivedPacket = (PacketRegister) packet;
             BufferedWriter bufferedWriter;
+            //update status
+            System.out.println("Updating status user");
             ChatServerController.dbManager.insertUser(receivedPacket.id, ConsoleUI.idServer, receivedPacket.ipAddressPort, receivedPacket.password, receivedPacket.name, "", "offline");
             if (receivedPacket.sourceType == SourceType.CLIENT) {
-                Packet packetPropagation = new PacketRegister(PacketType.REGISTER, this.connectedSockets.size(), SourceType.SERVER, receivedPacket.id, receivedPacket.password, receivedPacket.name, receivedPacket.ipAddressPort);
+                PacketRegister packetPropagation = new PacketRegister(PacketType.REGISTER, this.connectedSockets.size(), SourceType.SERVER, receivedPacket.id, receivedPacket.password, receivedPacket.name);
+                packetPropagation.ipAddressPort = receivedPacket.ipAddressPort;
                 //Kirim response ke client
                 Packet packetResponse = new PacketDefaultResponse(PacketType.DEFAULT_RESPONSE, this.connectedSockets.size(), SourceType.SERVER, "Register Successfull!");
+                System.out.println("Sending Register Response : ");
+                System.out.println(packetResponse.toString());
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedSockets.get(receivedPacket.ipAddressPort).getOutputStream()));
                 bufferedWriter.write(packetResponse.toString());
                 bufferedWriter.flush();
                 //kirim ke semua server
+                System.out.println("Sending propagate Register : ");
                 for (Socket connectedServerSocket : connectedServerSockets) {
                     bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedServerSocket.getOutputStream()));
+                    System.out.println("Packet to server "+connectedServerSocket.getRemoteSocketAddress().toString()+" : "+packetPropagation.toString());
                     bufferedWriter.write(packetPropagation.toString());
                     bufferedWriter.flush();
                 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 10, 2016 at 06:39 AM
+-- Generation Time: Nov 10, 2016 at 09:01 AM
 -- Server version: 5.7.13-log
 -- PHP Version: 5.6.23
 
@@ -75,7 +75,8 @@ CREATE TABLE `server` (
 
 INSERT INTO `server` (`id`, `ip_address`, `port`) VALUES
 ('testingServer', '127.0.0.1', 2013),
-('testingServer1', '127.0.0.1', 2012);
+('testingServer1', '127.0.0.1', 2012),
+('testingServer2', '192.168.173.1', 2013);
 
 -- --------------------------------------------------------
 
@@ -99,9 +100,10 @@ CREATE TABLE `user_sat` (
 
 INSERT INTO `user_sat` (`id`, `id_server`, `ip_address_port`, `passwd`, `prof_name`, `public_key`, `current_status`) VALUES
 ('broadcast', 'testingServer', '127.0.0.1:27015', 'slansdjlsndfasjkdbvasdjabksdhbfeawyiu', 'broadcast', 'fasbdfkashvasjgdvfasjdfgaisyufbasdjhvasdfaj', 'offline'),
-('cete', 'testingServer1', '127.0.0.1:56565', 'testing', 'Christian Thomas', 'testing', 'offline'),
-('egaprianto', 'testingServer', '127.0.0.1:56564', 'testing', 'Ega Prianto', 'testing', 'offline'),
-('testing', 'testingServer', '127.0.0.1:56595', 'testing', 'testing', 'testing', 'offline');
+('cete', 'testingServer', '127.0.0.1:49677', 'testing', 'Christian Thomas', 'testing', 'offline'),
+('egaprianto', 'testingServer', '127.0.0.1:52863', 'testing', 'Ega Prianto', 'testing', 'offline'),
+('garlzend', 'testingServer', '127.0.0.1:52861', 'testing', 'Garlz', '', 'offline'),
+('testing', 'testingServer', '127.0.0.1:50827', 'testing', 'testing', 'testing', 'offline');
 
 --
 -- Indexes for dumped tables

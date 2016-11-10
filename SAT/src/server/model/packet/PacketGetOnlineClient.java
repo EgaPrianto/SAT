@@ -14,15 +14,14 @@ public class PacketGetOnlineClient extends Packet {
     public String id;
     public String ipAddressPort;
     
-    public PacketGetOnlineClient(PacketType command, int serverLoad, SourceType sourceType,String id, String ipAddressPort) {
+    public PacketGetOnlineClient(PacketType command, int serverLoad, SourceType sourceType,String id) {
         super(command, serverLoad, sourceType);
         this.id = id;
-        this.ipAddressPort = ipAddressPort;
     }
 
     @Override
     public String getBodyData() {
-        return id+";"+ipAddressPort;
+        return id;
     }
 
 }

@@ -129,11 +129,13 @@ public class RegisterUI extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        this.gui.setMainPanelTo(new LoginUI(gui, connRecv, connSend));
+        LoginUI loginUI = new LoginUI(gui,connRecv,connSend);
+        connRecv.user.get().addObserver(loginUI);
+        this.gui.setMainPanelTo(loginUI);
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
-        PacketRegister packetRegister = new PacketRegister(PacketType.REGISTER, 0, SourceType.CLIENT, this.jTextFieldID.getText(), new String(this.jPasswordField.getPassword()), this.jTextFieldProfileName.getText(), this.connRecv.socket.getRemoteSocketAddress().toString().substring(1));
+        PacketRegister packetRegister = new PacketRegister(PacketType.REGISTER, 0, SourceType.CLIENT, this.jTextFieldID.getText(), new String(this.jPasswordField.getPassword()), this.jTextFieldProfileName.getText());
         this.connSend.addPacket(packetRegister);
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 

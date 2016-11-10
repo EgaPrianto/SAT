@@ -52,9 +52,11 @@ public class TaskLoginExecutor extends TaskExecutor {
                     ChatServerController.dbManager.updateStatusUser(packetLogin.id, "online");
                     ChatServerController.dbManager.updateServerUser(packetLogin.id, ConsoleUI.idServer);
                     loginResponse = new PacketLoginResponse(PacketType.LOGIN_RESPONSE, connectedSockets.size(), SourceType.SERVER, LoginResponseType.PROCEED, username);
+                    System.out.println("Client Requested login : " + packetLogin.ipAddressPort);
+                    System.out.println("Sending login response : " + loginResponse.toString());
                     bufferedWriter.write(loginResponse.toString());
                     bufferedWriter.flush();
-                    PacketLoginServer packetPropagateServer = new PacketLoginServer(PacketType.LOGIN_SERVER, this.connectedSockets.size(), SourceType.SERVER, packetLogin.id, packetLogin.ipAddressPort);
+                    PacketLoginServer packetPropagateServer = new PacketLoginServer(PacketType.LOGIN_SERVER, this.connectedSockets.size(), SourceType.SERVER, packetLogin.id, packetLogin.ipAddressPort, ConsoleUI.idServer);
                     //broadcast info login
                     System.out.println("Broadcasting notification to connected client");
                     for (Socket clientSocketNotification : connectedSockets.values()) {
@@ -83,8 +85,9 @@ public class TaskLoginExecutor extends TaskExecutor {
                 }
             } else if (this.packet instanceof PacketLoginServer) {
                 PacketLoginServer packet = (PacketLoginServer) this.packet;
-                ChatServerController.dbManager.updateIpAddressUser(packet.id, packet.ipAdressPort);
+                ChatServerController.dbManager.updateIpAddressUser(packet.id, packet.ipAddressPort);
                 ChatServerController.dbManager.updateStatusUser(packet.id, "online");
+                ChatServerController.dbManager.updateServerUser(packet.id, packet.idServer);
                 System.out.println("Broadcasting notification to connected client");
                 //broadcast info login
                 for (Socket clientSocketNotification : connectedSockets.values()) {

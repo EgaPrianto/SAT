@@ -64,6 +64,17 @@ public class JDBCMySQLManager {
         rs.close();
         return result;
     }
+    
+    
+    public String getIdServer(String ipAddress, int port) throws SQLException {
+       
+        String sql = "SELECT `id` FROM `server` WHERE `ip_address` = '" + ipAddress + "' AND `port` = "+port;
+        ResultSet rs = stmt.executeQuery(sql);
+        rs.next();
+        String result = rs.getString("id") ;
+        rs.close();
+        return result;
+    }
 
     public List<String> getAllIpAddressServer() throws SQLException {
         String sql = "SELECT `ip_address`,`port` FROM `server`";
