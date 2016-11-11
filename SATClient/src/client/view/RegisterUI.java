@@ -20,6 +20,7 @@ public class RegisterUI extends javax.swing.JPanel {
     GraphicalUI gui;
     ConnectionReceiver connRecv;
     ConnectionSender connSend;
+
     /**
      * Creates new form RegisterUI
      */
@@ -129,7 +130,7 @@ public class RegisterUI extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        LoginUI loginUI = new LoginUI(gui,connRecv,connSend);
+        LoginUI loginUI = new LoginUI(gui, connRecv, connSend);
         connRecv.user.get().addObserver(loginUI);
         this.gui.setMainPanelTo(loginUI);
     }//GEN-LAST:event_jButtonLoginActionPerformed

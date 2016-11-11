@@ -156,6 +156,7 @@ public class LoginUI extends javax.swing.JPanel implements Observer {
             this.connRecv.user.get().setId(this.jTextFieldID.getText());
             HomePage newHomePage = new HomePage(gui, connRecv, connSend);
             this.connRecv.home.get().addObserver(newHomePage);
+            this.connRecv.broadcastRoomData.get().addObserver(newHomePage);
             this.gui.setMainPanelTo(newHomePage);
             this.connRecv.user.get().deleteObservers();
         } else {

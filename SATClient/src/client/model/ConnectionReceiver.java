@@ -5,6 +5,7 @@
  */
 package client.model;
 
+import client.model.clientData.BroadcastChat;
 import client.model.clientData.Chat;
 import client.model.clientData.Home;
 import client.model.clientData.PrivateChat;
@@ -44,7 +45,7 @@ import server.model.packet.SourceType;
  * @author Ega Prianto
  */
 public class ConnectionReceiver implements Runnable {
-
+    
     public int port;
     public String ip;
     public Socket socket;
@@ -52,17 +53,18 @@ public class ConnectionReceiver implements Runnable {
     private boolean isFinish;
     public static String MOTD;
     public ConnectionSender connSend;
-
+    
     private BufferedReader br;
     private BufferedWriter bw;
     public ConcurrentHashMap<String, Chat> chatRoomsData;
+    public AtomicReference<BroadcastChat> broadcastRoomData;
     public AtomicReference<User> user;
     public AtomicReference<Home> home;
-
+    
     public void setConnSend(ConnectionSender connSend) {
         this.connSend = connSend;
     }
-
+    
     public ConnectionReceiver(String ip, int port) throws IOException {
         this.thread = new Thread(this);
         this.port = port;
@@ -72,10 +74,11 @@ public class ConnectionReceiver implements Runnable {
         this.chatRoomsData = new ConcurrentHashMap<>();
         user = new AtomicReference<>(new User(null, null, false));
         home = new AtomicReference<>(new Home());
+        broadcastRoomData = new AtomicReference<>(new BroadcastChat("broadcast"));
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
-
+    
     @Override
     public void run() {
         try {
@@ -105,6 +108,8 @@ public class ConnectionReceiver implements Runnable {
                                 } else {
                                     chatRoomData.addOpponentChat(chatReceived.chat, GraphicalUI.DATE_FORMAT.parse(chatReceived.timestamp).getTime());
                                 }
+                            } else if (chatReceived.chatType == ChatType.BROADCAST) {
+                                broadcastRoomData.get().addUserBroadcastChat(chatReceived.idPengirim, chatReceived.chat, GraphicalUI.DATE_FORMAT.parse(chatReceived.timestamp).getTime());
                             };
                         }
                         break;
@@ -147,7 +152,7 @@ public class ConnectionReceiver implements Runnable {
                             JOptionPane.showConfirmDialog(null, getResponse.response, "Server Response", JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
                         }
                         break;
-
+                    
                 }
             }
         } catch (IOException ex) {
@@ -156,15 +161,15 @@ public class ConnectionReceiver implements Runnable {
             Logger.getLogger(ConnectionReceiver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public void start() {
         this.thread.start();
         this.isFinish = false;
     }
-
+    
     public void stop() throws InterruptedException {
         this.isFinish = true;
         this.thread.join();
     }
-
+    
 }

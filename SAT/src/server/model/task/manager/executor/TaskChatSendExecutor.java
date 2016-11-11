@@ -63,11 +63,14 @@ public class TaskChatSendExecutor extends TaskExecutor {
                             bufferedWriter.flush();
                         }
                     }
+                    String ipAddressPengirim = ChatServerController.dbManager.getIpAddressPortUser(receivedPacket.idPengirim);
                     //mengirim ke semua client yang terhubung
                     for (Socket clientSocket : connectedSockets.values()) {
-                        bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                        bufferedWriter.write(chatSend.toString());
-                        bufferedWriter.flush();
+                        if (!clientSocket.getRemoteSocketAddress().toString().substring(1).equals(ipAddressPengirim)) {
+                            bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                            bufferedWriter.write(chatSend.toString());
+                            bufferedWriter.flush();
+                        }
                     }
 
                 } else if (receivedPacket.chatType == ChatType.PRIVATE) {

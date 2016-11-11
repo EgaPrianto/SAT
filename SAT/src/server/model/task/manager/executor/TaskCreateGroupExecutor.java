@@ -9,10 +9,13 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.controller.ChatServerController;
 import server.model.packet.Packet;
 import server.model.packet.PacketCreateGroup;
 
@@ -31,11 +34,16 @@ public class TaskCreateGroupExecutor extends TaskExecutor {
         BufferedWriter bufferedWriter = null;
         try {
             PacketCreateGroup packetCreateGroup = (PacketCreateGroup) this.packet;
+            ChatServerController.dbManager.insertGroup(packetCreateGroup.id_group, packetCreateGroup.nama);
             // TODO
             Socket socket = connectedSockets.get("1321");
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
         } catch (IOException ex) {
+            Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {

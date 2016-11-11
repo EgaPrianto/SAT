@@ -28,7 +28,8 @@ public class Home extends Observable {
     }
 
     public void removeOnlineId(String id){
-        onlineIds.remove(onlineIds.indexOf(id));
+//        onlineIds.remove(onlineIds.indexOf(id));
+        onlineIds.remove(id);
         setChanged();
         notifyObservers();
     }

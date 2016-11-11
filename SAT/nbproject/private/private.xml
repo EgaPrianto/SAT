@@ -4,11 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/ConnectionReceiver.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/task/manager/executor/TaskLoginExecutor.java</file>
             <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/task/manager/TaskManager.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/packet/PacketGetOnlineClient.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/db/JDBCMySQLManager.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/task/manager/executor/TaskGetOnlineExecutor.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/view/ConsoleUI.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SAT/src/server/model/task/manager/executor/TaskChatSendExecutor.java</file>
         </group>
     </open-files>
 </project-private>

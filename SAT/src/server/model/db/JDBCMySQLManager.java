@@ -106,6 +106,14 @@ public class JDBCMySQLManager {
         preparedStatement.execute();
         preparedStatement.close();
     }
+    
+    public void insertGroup(String id, String name) throws SQLException, ParseException {
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `group_sat` (`id`, `Name`) VALUES (?, ?)");
+        preparedStatement.setString(1, id);
+        preparedStatement.setString(2, name);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
 
     public void insertServer(String idServer, String ip_address, int port) throws SQLException {
         try {
@@ -130,6 +138,15 @@ public class JDBCMySQLManager {
         preparedStatement.setString(5, prof_name);
         preparedStatement.setString(6, public_key);
         preparedStatement.setString(7, current_status);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
+    
+    public void insertUserToGroup(String idGroup, String idUser,String publicKey) throws SQLException{
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `user_group` (`id_group`, `id_user`, `public_key`) VALUES (?, ?, ?)");
+        preparedStatement.setString(1, idGroup);
+        preparedStatement.setString(2, idUser);
+        preparedStatement.setString(3, publicKey);
         preparedStatement.execute();
         preparedStatement.close();
     }

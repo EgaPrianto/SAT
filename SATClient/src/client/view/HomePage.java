@@ -7,11 +7,13 @@ package client.view;
 
 import client.model.ConnectionReceiver;
 import client.model.ConnectionSender;
+import client.model.clientData.BroadcastChat;
 import client.model.clientData.Home;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -22,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import server.model.packet.ChatType;
+import server.model.packet.PacketChatSend;
 import server.model.packet.PacketGetOnlineClient;
 import server.model.packet.PacketLogout;
 import server.model.packet.PacketType;
@@ -32,12 +35,12 @@ import server.model.packet.SourceType;
  * @author ASUS A455LF
  */
 public class HomePage extends javax.swing.JPanel implements Observer {
-
+    
     GraphicalUI gui;
     ConnectionReceiver connRecv;
     ConnectionSender connSend;
     Dimension panelFriendListDimension;
-
+    
     public HomePage(GraphicalUI gui, ConnectionReceiver connRecv, ConnectionSender connSend) {
         initComponents();
         panelFriendListDimension = new Dimension(450, 0);
@@ -60,11 +63,11 @@ public class HomePage extends javax.swing.JPanel implements Observer {
                 PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId());
                 connSend.addPacket(packetLoggingout);
                 System.exit(0);
-
+                
             }
         });
     }
-
+    
     public void resetFriendList() {
         panelFriendListDimension = new Dimension(450, 0);
         this.jPanelFriendList.removeAll();
@@ -72,7 +75,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         this.jPanelFriendList.setPreferredSize(panelFriendListDimension);
         this.jPanelFriendList.repaint();
     }
-
+    
     public void addNewFriendList(String id) {
         panelFriendListDimension.setSize(panelFriendListDimension.getWidth(), panelFriendListDimension.getHeight() + 46);
         this.jPanelFriendList.add(new EntityUI(connRecv, connSend, ChatType.PRIVATE, id));
@@ -97,8 +100,8 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextAreaBroadcastChat = new javax.swing.JTextArea();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jTextFieldBroadcastChat = new javax.swing.JTextField();
+        jButtonBroadcastChatSend = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jButtonLogout = new javax.swing.JButton();
         jButtonRefresh = new javax.swing.JButton();
@@ -134,7 +137,12 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         jTextAreaBroadcastChat.setRows(5);
         jScrollPane3.setViewportView(jTextAreaBroadcastChat);
 
-        jButton1.setText("SEND");
+        jButtonBroadcastChatSend.setText("SEND");
+        jButtonBroadcastChatSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBroadcastChatSendActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Insert broadcast text below:");
 
@@ -147,9 +155,9 @@ public class HomePage extends javax.swing.JPanel implements Observer {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextFieldBroadcastChat, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButtonBroadcastChatSend, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -164,8 +172,8 @@ public class HomePage extends javax.swing.JPanel implements Observer {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+                    .addComponent(jTextFieldBroadcastChat)
+                    .addComponent(jButtonBroadcastChatSend, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -218,6 +226,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
             PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId());
             connSend.addPacket(packetLoggingout);
             this.connRecv.home.get().deleteObservers();
+            this.connRecv.broadcastRoomData.get().deleteObservers();
             this.connRecv.user.get().setId(null);
             this.connRecv.user.get().setUsername(null);
             this.connRecv.user.get().setAuthenticated(false);
@@ -236,9 +245,21 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         connSend.addPacket(requestOnlineClient);
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 
+    private void jButtonBroadcastChatSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBroadcastChatSendActionPerformed
+        long currentTime = System.currentTimeMillis();
+        Date currentDate = new Date(currentTime);
+        PacketChatSend packetChatSend = new PacketChatSend(PacketType.CHAT_SEND, 0,
+                SourceType.CLIENT,
+                ChatType.BROADCAST,
+                this.connRecv.user.get().getId(),
+                "broadcast", this.jTextFieldBroadcastChat.getText(), GraphicalUI.DATE_FORMAT.format(currentDate));
+        connSend.addPacket(packetChatSend);
+        this.connRecv.broadcastRoomData.get().addSelfChat(this.jTextFieldBroadcastChat.getText(), currentTime);
+    }//GEN-LAST:event_jButtonBroadcastChatSendActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonBroadcastChatSend;
     private javax.swing.JButton jButtonLogout;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JLabel jLabel1;
@@ -250,15 +271,20 @@ public class HomePage extends javax.swing.JPanel implements Observer {
     private javax.swing.JScrollPane jScrollPaneFriendList;
     private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JTextArea jTextAreaBroadcastChat;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextFieldBroadcastChat;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void update(Observable o, Object arg) {
-        Home update = (Home) o;
-        resetFriendList();
-        for (int i = 0; i < update.getOnlineIds().size(); i++) {
-            addNewFriendList(update.getOnlineIds().get(i));
+        if (o instanceof BroadcastChat) {
+            BroadcastChat update = (BroadcastChat) o;
+            this.jTextAreaBroadcastChat.setText(update.toString());
+        } else if (o instanceof Home) {
+            Home update = (Home) o;
+            resetFriendList();
+            for (int i = 0; i < update.getOnlineIds().size(); i++) {
+                addNewFriendList(update.getOnlineIds().get(i));
+            }
         }
     }
 }
