@@ -14,22 +14,24 @@ import java.util.ArrayList;
 public class PacketCreateGroup extends Packet{
     public String id_group;
     public String nama;
-    public ArrayList<String> listID; 
+    public ArrayList<String> listIDMember; 
+    public String idCreator;
     
-    public PacketCreateGroup(PacketType command, int serverLoad, SourceType sourceType, String id_group, String nama,ArrayList<String> listId) {
+    public PacketCreateGroup(PacketType command, int serverLoad, SourceType sourceType, String id_group, String nama, String idCreator,ArrayList<String> listIDMember) {
         super(command, serverLoad, sourceType);
         this.id_group=id_group;
         this.nama=nama;
-        this.listID = listId;
+        this.listIDMember = listIDMember;
+        this.idCreator = idCreator;
     }
 
     @Override
     public String getBodyData() {
         String hasil="";
-        for (int i = 0; i < listID.size()-1; i++) {
-            hasil+=listID.get(i)+";";
+        for (int i = 0; i < listIDMember.size()-1; i++) {
+            hasil+=listIDMember.get(i)+";";
         }
-        hasil+=listID.get(listID.size()-1);
-        return id_group + ";" + nama+";"+hasil;
+        hasil+=listIDMember.get(listIDMember.size()-1);
+        return id_group + ";" + nama+";"+idCreator+";"+hasil;
     }
 }

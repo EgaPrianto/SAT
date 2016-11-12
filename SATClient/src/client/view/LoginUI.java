@@ -14,7 +14,7 @@ import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JOptionPane;
 import server.model.packet.ChatType;
-import server.model.packet.PacketLoginClient;
+import server.model.packet.PacketLoginRequest;
 import server.model.packet.PacketType;
 import server.model.packet.SourceType;
 
@@ -126,10 +126,11 @@ public class LoginUI extends javax.swing.JPanel implements Observer {
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
         this.gui.setMainPanelTo(new RegisterUI(gui, connRecv, connSend));
+        this.connRecv.user.get().deleteObservers();
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        PacketLoginClient toSend = new PacketLoginClient(PacketType.LOGIN_CLIENT, 0, SourceType.CLIENT, this.jTextFieldID.getText(), new String(this.jPasswordField.getPassword()));
+        PacketLoginRequest toSend = new PacketLoginRequest(PacketType.LOGIN_REQUEST, 0, SourceType.CLIENT, this.jTextFieldID.getText(), new String(this.jPasswordField.getPassword()));
         this.connSend.addPacket(toSend);
         this.jButtonBack.setEnabled(false);
         this.jButtonLogin.setEnabled(false);

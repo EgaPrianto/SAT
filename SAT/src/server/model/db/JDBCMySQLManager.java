@@ -64,14 +64,13 @@ public class JDBCMySQLManager {
         rs.close();
         return result;
     }
-    
-    
+
     public String getIdServer(String ipAddress, int port) throws SQLException {
-       
-        String sql = "SELECT `id` FROM `server` WHERE `ip_address` = '" + ipAddress + "' AND `port` = "+port;
+
+        String sql = "SELECT `id` FROM `server` WHERE `ip_address` = '" + ipAddress + "' AND `port` = " + port;
         ResultSet rs = stmt.executeQuery(sql);
         rs.next();
-        String result = rs.getString("id") ;
+        String result = rs.getString("id");
         rs.close();
         return result;
     }
@@ -86,6 +85,18 @@ public class JDBCMySQLManager {
         }
         return result;
     }
+
+    public List<String> getAllMemberIdGroup(String idGroup) throws SQLException {
+        String sql = "SELECT `id_member` FROM `user_group` WHERE `id_group` != '" + idGroup + "'";
+        ResultSet rs = stmt.executeQuery(sql);
+        List<String> result = new ArrayList<>();
+        while (rs.next()) {
+            String idMember = rs.getString("id_member");
+            result.add(idMember);
+        }
+        return result;
+    }
+
     public List<String> getAllIpAddressServerExcept(String idServer) throws SQLException {
         String sql = "SELECT `ip_address`,`port` FROM `server` WHERE `id` != '" + idServer + "'";
         ResultSet rs = stmt.executeQuery(sql);
@@ -106,7 +117,17 @@ public class JDBCMySQLManager {
         preparedStatement.execute();
         preparedStatement.close();
     }
-    
+
+    public void insertChatGroup(String id_sender, String id_group, String chat, String date) throws SQLException, ParseException {
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `group_chat` (`id_sender`, `id_group`, `chat_message`, `datetime`) VALUES (?, ?,?, ?)");
+        preparedStatement.setString(1, id_sender);
+        preparedStatement.setString(2, id_group);
+        preparedStatement.setString(3, chat);
+        preparedStatement.setString(4, date);
+        preparedStatement.execute();
+        preparedStatement.close();
+    }
+
     public void insertGroup(String id, String name) throws SQLException, ParseException {
         PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `group_sat` (`id`, `Name`) VALUES (?, ?)");
         preparedStatement.setString(1, id);
@@ -141,9 +162,9 @@ public class JDBCMySQLManager {
         preparedStatement.execute();
         preparedStatement.close();
     }
-    
-    public void insertUserToGroup(String idGroup, String idUser,String publicKey) throws SQLException{
-        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `user_group` (`id_group`, `id_user`, `public_key`) VALUES (?, ?, ?)");
+
+    public void insertUserToGroup(String idGroup, String idUser, String publicKey) throws SQLException {
+        PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES (?, ?, ?)");
         preparedStatement.setString(1, idGroup);
         preparedStatement.setString(2, idUser);
         preparedStatement.setString(3, publicKey);
@@ -167,7 +188,7 @@ public class JDBCMySQLManager {
         System.out.println("Executing Query = " + sql);
         stmt.executeUpdate(sql);
     }
-    
+
     public void updateServerUser(String id, String serverId) throws SQLException {
         String sql = "UPDATE `user_sat` SET `id_server` = '" + serverId + "' WHERE `user_sat`.`id` = '" + id + "'";
         System.out.println("Executing Query = " + sql);
@@ -202,6 +223,20 @@ public class JDBCMySQLManager {
             String id = rs.getString("id");
             System.out.println("Got Online Id : " + id);
             result.add(id);
+        }
+        rs.close();
+        return result;
+    }
+    
+    public ArrayList<String> getGroups(String id) throws SQLException {
+        String sql = "SELECT `id_group` FROM `user_group` WHERE `id_member` = '" + id + "'";
+        System.out.println(sql);
+        ResultSet rs = stmt.executeQuery(sql);
+        ArrayList<String> result = new ArrayList<>();
+        while (rs.next()) {
+            String getId = rs.getString("id_group");
+            System.out.println("Got Group Id : " + getId);
+            result.add(getId);
         }
         rs.close();
         return result;

@@ -25,7 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import server.model.packet.ChatType;
 import server.model.packet.PacketChatSend;
-import server.model.packet.PacketGetOnlineClient;
+import server.model.packet.PacketCreateGroup;
+import server.model.packet.PacketGetOnlineRequest;
 import server.model.packet.PacketLogout;
 import server.model.packet.PacketType;
 import server.model.packet.SourceType;
@@ -35,21 +36,27 @@ import server.model.packet.SourceType;
  * @author ASUS A455LF
  */
 public class HomePage extends javax.swing.JPanel implements Observer {
-    
+
     GraphicalUI gui;
     ConnectionReceiver connRecv;
     ConnectionSender connSend;
     Dimension panelFriendListDimension;
-    
+    Dimension panelGroupListDimension;
+
     public HomePage(GraphicalUI gui, ConnectionReceiver connRecv, ConnectionSender connSend) {
         initComponents();
         panelFriendListDimension = new Dimension(450, 0);
+        panelGroupListDimension = new Dimension(450, 0);
         jPanelFriendList.setLayout(new BoxLayout(jPanelFriendList, BoxLayout.PAGE_AXIS));
+        jPanelGroupList.setLayout(new BoxLayout(jPanelGroupList, BoxLayout.PAGE_AXIS));
         jScrollPaneFriendList.getVerticalScrollBar().setUnitIncrement(20);
         this.jPanelFriendList.setPreferredSize(panelFriendListDimension);
         this.jPanelFriendList.repaint();
+        jScrollPaneGroupList.getVerticalScrollBar().setUnitIncrement(20);
+        this.jPanelGroupList.setPreferredSize(panelFriendListDimension);
+        this.jPanelGroupList.repaint();
         this.jTextAreaBroadcastChat.setEditable(false);
-        PacketGetOnlineClient requestOnlineClient = new PacketGetOnlineClient(PacketType.GET_ONLINE_CLIENT,
+        PacketGetOnlineRequest requestOnlineClient = new PacketGetOnlineRequest(PacketType.GET_ONLINE_REQUEST,
                 0,
                 SourceType.CLIENT,
                 connRecv.user.get().getId());
@@ -63,11 +70,26 @@ public class HomePage extends javax.swing.JPanel implements Observer {
                 PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId());
                 connSend.addPacket(packetLoggingout);
                 System.exit(0);
-                
+
             }
         });
     }
-    
+
+    public void resetGroupList() {
+        this.panelGroupListDimension = new Dimension(450, 0);
+        this.jPanelGroupList.removeAll();
+        this.jPanelGroupList.setLayout(new BoxLayout(jPanelGroupList, BoxLayout.PAGE_AXIS));
+        this.jPanelGroupList.setPreferredSize(panelGroupListDimension);
+        this.jPanelGroupList.repaint();
+    }
+
+    public void addNewGroupList(String idGroup) {
+        panelFriendListDimension.setSize(panelGroupListDimension.getWidth(), panelGroupListDimension.getHeight() + 46);
+        this.jPanelGroupList.add(new EntityUI(connRecv, connSend, ChatType.GROUP, idGroup));
+        this.jPanelGroupList.setPreferredSize(panelGroupListDimension);
+        this.jPanelGroupList.repaint();
+    }
+
     public void resetFriendList() {
         panelFriendListDimension = new Dimension(450, 0);
         this.jPanelFriendList.removeAll();
@@ -75,7 +97,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         this.jPanelFriendList.setPreferredSize(panelFriendListDimension);
         this.jPanelFriendList.repaint();
     }
-    
+
     public void addNewFriendList(String id) {
         panelFriendListDimension.setSize(panelFriendListDimension.getWidth(), panelFriendListDimension.getHeight() + 46);
         this.jPanelFriendList.add(new EntityUI(connRecv, connSend, ChatType.PRIVATE, id));
@@ -96,8 +118,11 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         jPanelFriendSubFrame = new javax.swing.JPanel();
         jScrollPaneFriendList = new javax.swing.JScrollPane();
         jPanelFriendList = new javax.swing.JPanel();
+        jPanelGroupSubFrame = new javax.swing.JPanel();
+        jScrollPaneGroupList = new javax.swing.JScrollPane();
         jPanelGroupList = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
+        jButtonCreateNewGroup = new javax.swing.JButton();
+        jPanelBroadcastChat = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextAreaBroadcastChat = new javax.swing.JTextArea();
         jTextFieldBroadcastChat = new javax.swing.JTextField();
@@ -124,14 +149,47 @@ public class HomePage extends javax.swing.JPanel implements Observer {
             jPanelFriendSubFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelFriendSubFrameLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneFriendList, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addComponent(jScrollPaneFriendList, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane5.addTab("Friend", jPanelFriendSubFrame);
 
         jPanelGroupList.setLayout(new javax.swing.BoxLayout(jPanelGroupList, javax.swing.BoxLayout.LINE_AXIS));
-        jTabbedPane5.addTab("Group", jPanelGroupList);
+        jScrollPaneGroupList.setViewportView(jPanelGroupList);
+
+        jButtonCreateNewGroup.setText("Create New Group");
+        jButtonCreateNewGroup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCreateNewGroupActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelGroupSubFrameLayout = new javax.swing.GroupLayout(jPanelGroupSubFrame);
+        jPanelGroupSubFrame.setLayout(jPanelGroupSubFrameLayout);
+        jPanelGroupSubFrameLayout.setHorizontalGroup(
+            jPanelGroupSubFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelGroupSubFrameLayout.createSequentialGroup()
+                .addGroup(jPanelGroupSubFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelGroupSubFrameLayout.createSequentialGroup()
+                        .addGap(354, 354, 354)
+                        .addComponent(jButtonCreateNewGroup))
+                    .addGroup(jPanelGroupSubFrameLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPaneGroupList, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanelGroupSubFrameLayout.setVerticalGroup(
+            jPanelGroupSubFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelGroupSubFrameLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonCreateNewGroup)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPaneGroupList)
+                .addGap(12, 12, 12))
+        );
+
+        jTabbedPane5.addTab("Group", jPanelGroupSubFrame);
 
         jTextAreaBroadcastChat.setColumns(20);
         jTextAreaBroadcastChat.setRows(5);
@@ -146,38 +204,38 @@ public class HomePage extends javax.swing.JPanel implements Observer {
 
         jLabel1.setText("Insert broadcast text below:");
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelBroadcastChatLayout = new javax.swing.GroupLayout(jPanelBroadcastChat);
+        jPanelBroadcastChat.setLayout(jPanelBroadcastChatLayout);
+        jPanelBroadcastChatLayout.setHorizontalGroup(
+            jPanelBroadcastChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelBroadcastChatLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelBroadcastChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBroadcastChatLayout.createSequentialGroup()
                         .addComponent(jTextFieldBroadcastChat, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonBroadcastChatSend, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addGroup(jPanelBroadcastChatLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        jPanelBroadcastChatLayout.setVerticalGroup(
+            jPanelBroadcastChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelBroadcastChatLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelBroadcastChatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldBroadcastChat)
-                    .addComponent(jButtonBroadcastChatSend, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+                    .addComponent(jButtonBroadcastChatSend, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jTabbedPane5.addTab("Broadcast", jPanel3);
+        jTabbedPane5.addTab("Broadcast", jPanelBroadcastChat);
 
         jButtonLogout.setText("LOGOUT");
         jButtonLogout.addActionListener(new java.awt.event.ActionListener() {
@@ -238,7 +296,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
     }//GEN-LAST:event_jButtonLogoutActionPerformed
 
     private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
-        PacketGetOnlineClient requestOnlineClient = new PacketGetOnlineClient(PacketType.GET_ONLINE_CLIENT,
+        PacketGetOnlineRequest requestOnlineClient = new PacketGetOnlineRequest(PacketType.GET_ONLINE_REQUEST,
                 0,
                 SourceType.CLIENT,
                 connRecv.user.get().getId());
@@ -257,18 +315,39 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         this.connRecv.broadcastRoomData.get().addSelfChat(this.jTextFieldBroadcastChat.getText(), currentTime);
     }//GEN-LAST:event_jButtonBroadcastChatSendActionPerformed
 
+    private void jButtonCreateNewGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreateNewGroupActionPerformed
+        CreateGroupUI createGroup = new CreateGroupUI();
+        int result = JOptionPane.showConfirmDialog(null, createGroup,
+                "Please Enter X and Y Values", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String idGroup = createGroup.getjTextFieldIDGroup().getText();
+            String groupName = createGroup.getjTextFieldGroupName().getText();
+            String listMemberId = createGroup.getjTextAreaMemberIDs().getText();
+            String[] splitted = listMemberId.split(";");
+            ArrayList<String> arrayListMemberIDs = new ArrayList<>();
+            for (String string : splitted) {
+                arrayListMemberIDs.add(string);
+            }
+            PacketCreateGroup packetCreateGroup = new PacketCreateGroup(PacketType.CREATE_GROUP, 0, SourceType.CLIENT, idGroup, groupName, this.connRecv.user.get().getId(), arrayListMemberIDs);
+            connSend.addPacket(packetCreateGroup);
+        }
+    }//GEN-LAST:event_jButtonCreateNewGroupActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBroadcastChatSend;
+    private javax.swing.JButton jButtonCreateNewGroup;
     private javax.swing.JButton jButtonLogout;
     private javax.swing.JButton jButtonRefresh;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelBroadcastChat;
     private javax.swing.JPanel jPanelFriendList;
     private javax.swing.JPanel jPanelFriendSubFrame;
     private javax.swing.JPanel jPanelGroupList;
+    private javax.swing.JPanel jPanelGroupSubFrame;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPaneFriendList;
+    private javax.swing.JScrollPane jScrollPaneGroupList;
     private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JTextArea jTextAreaBroadcastChat;
     private javax.swing.JTextField jTextFieldBroadcastChat;

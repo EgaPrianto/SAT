@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 11, 2016 at 05:00 AM
+-- Generation Time: Nov 11, 2016 at 03:51 PM
 -- Server version: 5.7.13-log
 -- PHP Version: 5.6.23
 
@@ -86,7 +86,7 @@ INSERT INTO `server` (`id`, `ip_address`, `port`) VALUES
 
 CREATE TABLE `user_group` (
   `id_group` varchar(255) NOT NULL,
-  `id_user` varchar(255) NOT NULL,
+  `id_member` varchar(255) NOT NULL,
   `public_key` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -114,9 +114,10 @@ INSERT INTO `user_sat` (`id`, `id_server`, `ip_address_port`, `passwd`, `prof_na
 ('arcgrant', 'testingServer', '127.0.0.1:50391', 'testing', 'Arcgrant', '', 'offline'),
 ('broadcast', 'testingServer', '127.0.0.1:27015', 'slansdjlsndfasjkdbvasdjabksdhbfeawyiu', 'broadcast', 'fasbdfkashvasjgdvfasjdfgaisyufbasdjhvasdfaj', 'offline'),
 ('cete', 'testingServer1', '127.0.0.1:50388', 'testing', 'Christian Thomas', 'testing', 'offline'),
-('egaprianto', 'testingServer', '127.0.0.1:50387', 'testing', 'Ega Prianto', 'testing', 'offline'),
+('egaprianto', 'testingServer', '127.0.0.1:57562', 'testing', 'Ega Prianto', 'testing', 'offline'),
 ('garlzend', 'testingServer', '127.0.0.1:54392', 'testing', 'Garlz', '', 'offline'),
-('testing', 'testingServer', '127.0.0.1:54392', 'testing', 'testing', 'testing', 'offline');
+('testing', 'testingServer', '127.0.0.1:54392', 'testing', 'testing', 'testing', 'offline'),
+('wych', 'testingServer1', '127.0.0.1:57560', '12345678', 'nougat', '', 'offline');
 
 --
 -- Indexes for dumped tables
@@ -153,7 +154,7 @@ ALTER TABLE `server`
 --
 ALTER TABLE `user_group`
   ADD KEY `id_group` (`id_group`),
-  ADD KEY `id_user` (`id_user`);
+  ADD KEY `id_user` (`id_member`);
 
 --
 -- Indexes for table `user_sat`
@@ -185,7 +186,7 @@ ALTER TABLE `group_chat`
 --
 ALTER TABLE `user_group`
   ADD CONSTRAINT `user_group_ibfk_1` FOREIGN KEY (`id_group`) REFERENCES `group_sat` (`id`),
-  ADD CONSTRAINT `user_group_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `user_sat` (`id`);
+  ADD CONSTRAINT `user_group_ibfk_2` FOREIGN KEY (`id_member`) REFERENCES `user_sat` (`id`);
 
 --
 -- Constraints for table `user_sat`

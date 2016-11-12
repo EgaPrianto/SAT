@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -49,9 +50,30 @@ public class TaskChatSendExecutor extends TaskExecutor {
                     receivedPacket.timestamp
             );
             if (receivedPacket.chatType == ChatType.GROUP) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                System.out.println("Inserting Chat to GroupChat Database");
+                ChatServerController.dbManager.insertChatGroup(receivedPacket.idPengirim, receivedPacket.idPenerima, receivedPacket.chat, receivedPacket.timestamp);
+                if (receivedPacket.sourceType == SourceType.CLIENT) {
+                    //kirim ke semua server
+                    for (Socket connectedServerSocket : connectedServerSockets) {
+                        bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedServerSocket.getOutputStream()));
+                        bufferedWriter.write(chatSend.toString());
+                        bufferedWriter.flush();
+                    }
+                }
+                //mengambil anggota-anggota group;
+                List<String> memberIds = ChatServerController.dbManager.getAllMemberIdGroup(receivedPacket.idPenerima);
+                //kirim ke anggota-anggota yang lg connect
+                for (String memberId : memberIds) {
+                    String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(memberId);
+                    if (!memberId.equals(receivedPacket.idPengirim) || this.connectedSockets.contains(ipAddressPort)) {
+                        Socket clientSocket = this.connectedSockets.get(ipAddressPort);
+                        bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                        bufferedWriter.write(chatSend.toString());
+                        bufferedWriter.flush();
+                    }
+                }
             } else {
-                System.out.println("Inserting Chat to Database");
+                System.out.println("Inserting Chat to UserChat Database");
                 ChatServerController.dbManager.insertChat(receivedPacket.idPengirim, receivedPacket.idPenerima, receivedPacket.chat, receivedPacket.timestamp);
                 int a;
                 if (receivedPacket.chatType == ChatType.BROADCAST) {

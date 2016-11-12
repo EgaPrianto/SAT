@@ -3,12 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/model/clientData/BroadcastChat.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/ChatRoom.java</file>
             <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/HomePage.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/model/clientData/PrivateChat.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/model/clientData/Chat.java</file>
-            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/model/ConnectionReceiver.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/InitPage.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/GraphicalUI.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/RegisterUI.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/EntityUI.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/model/clientData/GroupChat.java</file>
+            <file>file:/C:/Users/Ega%20Prianto/Documents/GitHub/DevelopWorkspace/SAT/SATClient/src/client/view/LoginUI.java</file>
         </group>
     </open-files>
 </project-private>

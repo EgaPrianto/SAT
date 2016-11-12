@@ -8,7 +8,9 @@ package client.view;
 import client.model.ConnectionReceiver;
 import client.model.ConnectionSender;
 import client.model.clientData.Chat;
+import client.model.clientData.GroupChat;
 import client.model.clientData.PrivateChat;
+import javax.swing.JOptionPane;
 import server.model.packet.ChatType;
 
 /**
@@ -75,15 +77,19 @@ public class EntityUI extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonChatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChatActionPerformed
-        
         Chat newChat;
         if (chatType == ChatType.PRIVATE) {
             newChat = new PrivateChat(idLawan);
+            this.connRecv.chatRoomsData.put(idLawan, newChat);
+        } else if (chatType == ChatType.GROUP) {
+            GroupChat newGroupChat = new GroupChat(idLawan);
+            newChat = newGroupChat;
+            this.connRecv.groupChatRoomsData.put(idLawan, newGroupChat);
         } else {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            JOptionPane.showConfirmDialog(null, "Chat Type not Supported!", "Error!", JOptionPane.NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        this.connRecv.chatRoomsData.put(idLawan, newChat);
-        ChatRoom.popChatWindow(newChat, chatType, connRecv.user.get().getId(), idLawan, connSend,connRecv);
+        ChatRoom.popChatWindow(newChat, chatType, connRecv.user.get().getId(), idLawan, connSend, connRecv);
     }//GEN-LAST:event_jButtonChatActionPerformed
 
 

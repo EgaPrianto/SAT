@@ -9,12 +9,12 @@ package server.model.packet;
  *
  * @author Ega Prianto
  */
-public class PacketGetOnlineClient extends Packet {
+public class PacketGetGroupRequest extends Packet {
     
     public String id;
     public String ipAddressPort;
     
-    public PacketGetOnlineClient(PacketType command, int serverLoad, SourceType sourceType,String id) {
+    public PacketGetGroupRequest(PacketType command, int serverLoad, SourceType sourceType,String id) {
         super(command, serverLoad, sourceType);
         this.id = id;
     }

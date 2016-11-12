@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 import server.controller.ChatServerController;
 import server.model.db.JDBCMySQLManager;
 import server.model.packet.Packet;
+import server.model.packet.PacketGetGroupRequest;
+import server.model.packet.PacketGetGroupResponse;
 import server.model.packet.PacketGetOnlineRequest;
 import server.model.packet.PacketGetOnlineResponse;
 import server.model.packet.PacketType;
@@ -27,30 +29,30 @@ import server.model.packet.SourceType;
  *
  * @author Ega Prianto
  */
-public class TaskGetOnlineExecutor extends TaskExecutor {
+public class TaskGetGroupExecutor extends TaskExecutor {
 
-    public TaskGetOnlineExecutor(ConcurrentHashMap<String, Socket> connectedSockets, CopyOnWriteArrayList<Socket> connectedServerSockets, Packet packet) {
+    public TaskGetGroupExecutor(ConcurrentHashMap<String, Socket> connectedSockets, CopyOnWriteArrayList<Socket> connectedServerSockets, Packet packet) {
         super(connectedSockets, connectedServerSockets, packet);
     }
 
     @Override
     public void run() {
         try {
-            PacketGetOnlineRequest receivedPacket = (PacketGetOnlineRequest) packet;
-            ArrayList<String> ids = ChatServerController.dbManager.getOnlineExcept(receivedPacket.id);
-            PacketGetOnlineResponse toSend = new PacketGetOnlineResponse(PacketType.GET_ONLINE_RESPONSE, connectedSockets.size(), SourceType.SERVER, ids);
+            PacketGetGroupRequest receivedPacket = (PacketGetGroupRequest) packet;
+            ArrayList<String> ids = ChatServerController.dbManager.getGroups(receivedPacket.id);
+            PacketGetGroupResponse toSend = new PacketGetGroupResponse(PacketType.GET_GROUP_RESPONSE, connectedSockets.size(), SourceType.SERVER, ids);
             Socket socket = connectedSockets.get(receivedPacket.ipAddressPort);
-            System.out.print("Sending packet Online : " + toSend.toString());
+            System.out.print("Sending packet Get Group: " + toSend.toString());
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             bufferedWriter.write(toSend.toString());
             bufferedWriter.flush();
             this.thread.join();
         } catch (SQLException ex) {
-            Logger.getLogger(TaskGetOnlineExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TaskGetGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(TaskGetOnlineExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TaskGetGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
-            Logger.getLogger(TaskGetOnlineExecutor.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TaskGetGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

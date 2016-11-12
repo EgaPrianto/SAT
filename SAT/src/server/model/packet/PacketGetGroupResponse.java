@@ -11,22 +11,22 @@ import java.util.ArrayList;
  *
  * @author Ega Prianto
  */
-public class PacketGetOnlineServer extends Packet {
+public class PacketGetGroupResponse extends Packet {
 
-    public ArrayList<String> listID;
+    public ArrayList<String> listGroupID;
 
-    public PacketGetOnlineServer(PacketType command, int serverLoad, SourceType sourceType, ArrayList<String> listID) {
+    public PacketGetGroupResponse(PacketType command, int serverLoad, SourceType sourceType, ArrayList<String> listGroupID) {
         super(command, serverLoad, sourceType);
-        this.listID = listID;
+        this.listGroupID = listGroupID;
     }
 
     @Override
     public String getBodyData() {
         String hasil = "";
-        for (int i = 0; i < listID.size(); i++) {
-            hasil += listID.get(i) + ";";
+        for (int i = 0; i < listGroupID.size(); i++) {
+            hasil += listGroupID.get(i) + ";";
         }
-        if (listID.size() == 0) {
+        if (listGroupID.size() == 0) {
             return "";
         } else {
             return hasil.substring(0, hasil.length() - 1);

@@ -39,7 +39,7 @@ public class ConsoleUI {
 //        }
 
             BufferedReader br = new BufferedReader( 
-                    new FileReader(new File("server.properties")));
+                    new FileReader(new File("server1.properties")));
             String url = br.readLine();
             idServer = br.readLine();
             System.out.println(url + "\n"+idServer);

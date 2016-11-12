@@ -13,13 +13,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.model.packet.Packet;
 import server.model.packet.PacketChatSend;
-import server.model.packet.PacketGetOnlineClient;
-import server.model.packet.PacketLoginClient;
+import server.model.packet.PacketCreateGroup;
+import server.model.packet.PacketGetGroupRequest;
+import server.model.packet.PacketGetOnlineRequest;
+import server.model.packet.PacketLoginRequest;
 import server.model.packet.PacketLoginServer;
 import server.model.packet.PacketLogout;
 import server.model.packet.PacketRegister;
 import server.model.task.manager.executor.TaskChatSendExecutor;
+import server.model.task.manager.executor.TaskCreateGroupExecutor;
 import server.model.task.manager.executor.TaskExecutor;
+import server.model.task.manager.executor.TaskGetGroupExecutor;
 import server.model.task.manager.executor.TaskGetOnlineExecutor;
 import server.model.task.manager.executor.TaskLoginExecutor;
 import server.model.task.manager.executor.TaskLogoutExecutor;
@@ -52,20 +56,32 @@ public class TaskManager implements Runnable {
                     Packet newPacket = packetQueue.poll();
                     System.out.println("Assign Task");
                     switch (newPacket.command) {
+                        case CREATE_GROUP:
+                            if (newPacket instanceof PacketCreateGroup) {
+                                System.out.println("Task Chat Send Assigned");
+                                new TaskCreateGroupExecutor(connectedSockets, connectedServerSockets, newPacket).start();
+                            }
+                            break;
                         case CHAT_SEND:
                             if (newPacket instanceof PacketChatSend) {
                                 System.out.println("Task Chat Send Assigned");
                                 new TaskChatSendExecutor(connectedSockets, connectedServerSockets, newPacket).start();
                             }
                             break;
-                        case GET_ONLINE_CLIENT:
-                            if (newPacket instanceof PacketGetOnlineClient) {
+                        case GET_ONLINE_REQUEST:
+                            if (newPacket instanceof PacketGetOnlineRequest) {
                                 System.out.println("Task Get Online Client Assigned");
                                 new TaskGetOnlineExecutor(connectedSockets, connectedServerSockets, newPacket).start();
                             }
                             break;
-                        case LOGIN_CLIENT:
-                            if (newPacket instanceof PacketLoginClient) {
+                        case GET_GROUP_REQUEST:
+                            if (newPacket instanceof PacketGetGroupRequest) {
+                                System.out.println("Task Get Group Request Assigned");
+                                new TaskGetGroupExecutor(connectedSockets, connectedServerSockets, newPacket).start();
+                            }
+                            break;                            
+                        case LOGIN_REQUEST:
+                            if (newPacket instanceof PacketLoginRequest) {
                                 System.out.println("Task Login Client Assigned");
                                 new TaskLoginExecutor(connectedSockets, connectedServerSockets, newPacket).start();
                             }

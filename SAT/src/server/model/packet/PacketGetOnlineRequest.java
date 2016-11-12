@@ -9,21 +9,19 @@ package server.model.packet;
  *
  * @author Ega Prianto
  */
-public class PacketLoginClient extends Packet {
-
+public class PacketGetOnlineRequest extends Packet {
+    
     public String id;
-    public String password;
     public String ipAddressPort;
-
-    public PacketLoginClient(PacketType command, int serverLoad, SourceType sourceType, String id, String password) {
+    
+    public PacketGetOnlineRequest(PacketType command, int serverLoad, SourceType sourceType,String id) {
         super(command, serverLoad, sourceType);
-        this.id=id;
-        this.password=password;
+        this.id = id;
     }
 
     @Override
     public String getBodyData() {
-        return id+ ";"+password;
+        return id;
     }
 
 }

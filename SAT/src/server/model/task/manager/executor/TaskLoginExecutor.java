@@ -19,7 +19,7 @@ import server.controller.ChatServerController;
 import server.model.db.JDBCMySQLManager;
 import server.model.packet.LoginResponseType;
 import server.model.packet.Packet;
-import server.model.packet.PacketLoginClient;
+import server.model.packet.PacketLoginRequest;
 import server.model.packet.PacketLoginResponse;
 import server.model.packet.PacketLoginServer;
 import server.model.packet.PacketType;
@@ -40,8 +40,8 @@ public class TaskLoginExecutor extends TaskExecutor {
     public void run() {
         try {
             BufferedWriter bufferedWriter;
-            if (this.packet instanceof PacketLoginClient) {
-                PacketLoginClient packetLogin = (PacketLoginClient) this.packet;
+            if (this.packet instanceof PacketLoginRequest) {
+                PacketLoginRequest packetLogin = (PacketLoginRequest) this.packet;
                 String userPassword = ChatServerController.dbManager.getPasswordUser(packetLogin.id);
                 Socket clientSocket = connectedSockets.get(packetLogin.ipAddressPort);
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));

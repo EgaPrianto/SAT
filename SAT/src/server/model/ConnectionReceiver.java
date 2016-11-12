@@ -17,8 +17,9 @@ import java.util.logging.Logger;
 import server.model.db.JDBCMySQLManager;
 import server.model.packet.Packet;
 import server.model.packet.PacketFactory;
-import server.model.packet.PacketGetOnlineClient;
-import server.model.packet.PacketLoginClient;
+import server.model.packet.PacketGetGroupRequest;
+import server.model.packet.PacketGetOnlineRequest;
+import server.model.packet.PacketLoginRequest;
 import server.model.packet.PacketLoginServer;
 import server.model.packet.PacketRegister;
 
@@ -50,9 +51,9 @@ public class ConnectionReceiver implements Runnable {
 
                 System.out.println("Packet Builded :" + packet.toString());
                 switch (packet.command) {
-                    case LOGIN_CLIENT:
-                        if (packet instanceof PacketLoginClient) {
-                            PacketLoginClient packetLoginClient = (PacketLoginClient) packet;
+                    case LOGIN_REQUEST:
+                        if (packet instanceof PacketLoginRequest) {
+                            PacketLoginRequest packetLoginClient = (PacketLoginRequest) packet;
                             packetLoginClient.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
                             packetQueue.add(packetLoginClient);
                         }
@@ -64,9 +65,9 @@ public class ConnectionReceiver implements Runnable {
                             packetQueue.add(packetRegister);
                         }
                         break;
-                    case GET_ONLINE_CLIENT:
-                        if (packet instanceof PacketGetOnlineClient) {
-                            PacketGetOnlineClient packetGetOnlineClient=  (PacketGetOnlineClient) packet;
+                    case GET_ONLINE_REQUEST:
+                        if (packet instanceof PacketGetOnlineRequest) {
+                            PacketGetOnlineRequest packetGetOnlineClient=  (PacketGetOnlineRequest) packet;
                             packetGetOnlineClient.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
                             packetQueue.add(packetGetOnlineClient);
                         }
@@ -77,6 +78,13 @@ public class ConnectionReceiver implements Runnable {
                             packetQueue.add(packetLoginServer);
                         }
                         break;
+                    case GET_GROUP_REQUEST:
+                        if (packet instanceof PacketGetGroupRequest) {
+                            PacketGetGroupRequest packetGetGroupRequest=  (PacketGetGroupRequest) packet;
+                            packetGetGroupRequest.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
+                            packetQueue.add(packetGetGroupRequest);
+                        }
+                        break;                        
                     default:
                         packetQueue.add(packet);
                         break;

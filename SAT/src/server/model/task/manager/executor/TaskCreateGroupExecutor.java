@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -18,6 +19,8 @@ import java.util.logging.Logger;
 import server.controller.ChatServerController;
 import server.model.packet.Packet;
 import server.model.packet.PacketCreateGroup;
+import server.model.packet.PacketType;
+import server.model.packet.SourceType;
 
 /**
  *
@@ -33,24 +36,47 @@ public class TaskCreateGroupExecutor extends TaskExecutor {
     public void run() {
         BufferedWriter bufferedWriter = null;
         try {
-            PacketCreateGroup packetCreateGroup = (PacketCreateGroup) this.packet;
-            ChatServerController.dbManager.insertGroup(packetCreateGroup.id_group, packetCreateGroup.nama);
-            // TODO
-            Socket socket = connectedSockets.get("1321");
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            PacketCreateGroup receivedPacket = (PacketCreateGroup) this.packet;
+            ChatServerController.dbManager.insertGroup(receivedPacket.id_group, receivedPacket.nama);
+            List<String> listIdMember = receivedPacket.listIDMember;
+            ChatServerController.dbManager.insertUserToGroup(receivedPacket.id_group, receivedPacket.idCreator, "bakalKey");
+            for (String string : listIdMember) {
+                ChatServerController.dbManager.insertUserToGroup(receivedPacket.id_group, string, "");
+            }
+            System.out.println("Sending notification to client Create Group : ");
+            //kasih tau ke semua id yang lagi terhubung kalo bikin group
+            for (String string : listIdMember) {
+                String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(string);
+                if (this.connectedSockets.contains(ipAddressPort)) {
+                    Socket clientSocket = this.connectedSockets.get(ipAddressPort);
+                    bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                    System.out.println("Packet to Client " + clientSocket.getRemoteSocketAddress().toString() + " Create Group: " + clientSocket.toString());
+                    bufferedWriter.write(clientSocket.toString());
+                    bufferedWriter.flush();
+                }
+            }
 
+            if (receivedPacket.sourceType == SourceType.CLIENT) {
+                //kirim ke semua server
+                PacketCreateGroup packetPropagation = new PacketCreateGroup(PacketType.CREATE_GROUP,
+                        this.connectedSockets.size(),
+                        SourceType.SERVER, receivedPacket.id_group,
+                        receivedPacket.nama, receivedPacket.idCreator,
+                        receivedPacket.listIDMember);
+                System.out.println("Sending propagate Create Group : ");
+                for (Socket connectedServerSocket : connectedServerSockets) {
+                    bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedServerSocket.getOutputStream()));
+                    System.out.println("Packet to server " + connectedServerSocket.getRemoteSocketAddress().toString() + " : " + packetPropagation.toString());
+                    bufferedWriter.write(packetPropagation.toString());
+                    bufferedWriter.flush();
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                bufferedWriter.close();
-            } catch (IOException ex) {
-                Logger.getLogger(TaskCreateGroupExecutor.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 

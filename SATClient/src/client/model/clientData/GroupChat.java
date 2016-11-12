@@ -10,12 +10,19 @@ package client.model.clientData;
  * @author Ega Prianto
  */
 public class GroupChat extends Chat {
+
     /**
-     * kalo misalnya groupchat attribut withId jadi id chat
-     * @param withId 
+     * kalo misalnya groupchat attribut withId jadi id group chat
+     *
+     * @param withId
      */
     public GroupChat(String withId) {
         super(withId);
     }
-    
+
+    public void addGroupChat(String idPengirim, String newChat, long timestamp) {
+        this.chats.append(idPengirim);
+        addChat(newChat, timestamp);
+    }
+
 }
