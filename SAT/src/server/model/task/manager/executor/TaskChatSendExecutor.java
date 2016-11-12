@@ -65,7 +65,9 @@ public class TaskChatSendExecutor extends TaskExecutor {
                 //kirim ke anggota-anggota yang lg connect
                 for (String memberId : memberIds) {
                     String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(memberId);
-                    if (!memberId.equals(receivedPacket.idPengirim) || this.connectedSockets.contains(ipAddressPort)) {
+                    System.out.println("Pengirim tidak sama dengan penerima ?" + !memberId.equals(receivedPacket.idPengirim));
+                    System.out.println("ada client yang terhubung? "+  this.connectedSockets.containsKey(ipAddressPort));
+                    if (!memberId.equals(receivedPacket.idPengirim) && this.connectedSockets.containsKey(ipAddressPort)) {
                         Socket clientSocket = this.connectedSockets.get(ipAddressPort);
                         bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                         bufferedWriter.write(chatSend.toString());

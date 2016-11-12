@@ -31,8 +31,10 @@ import server.model.db.JDBCMySQLManager;
 import server.model.packet.ChatType;
 import server.model.packet.Packet;
 import server.model.packet.PacketChatSend;
+import server.model.packet.PacketCreateGroup;
 import server.model.packet.PacketDefaultResponse;
 import server.model.packet.PacketFactory;
+import server.model.packet.PacketGetGroupResponse;
 import server.model.packet.PacketGetOnlineResponse;
 import server.model.packet.PacketGotOnline;
 import server.model.packet.PacketLoginResponse;
@@ -114,12 +116,12 @@ public class ConnectionReceiver implements Runnable {
                             } else if (chatReceived.chatType == ChatType.BROADCAST) {
                                 broadcastRoomData.get().addUserBroadcastChat(chatReceived.idPengirim, chatReceived.chat, GraphicalUI.DATE_FORMAT.parse(chatReceived.timestamp).getTime());
                             } else if (chatReceived.chatType == ChatType.GROUP) {
-                                GroupChat chatRoomData = (GroupChat) this.chatRoomsData.get(chatReceived.idPengirim);
+                                GroupChat chatRoomData = (GroupChat) this.groupChatRoomsData.get(chatReceived.idPenerima);
                                 if (chatRoomData == null) {
                                     chatRoomData = new GroupChat(chatReceived.idPenerima);//idGroup
                                     chatRoomData.addGroupChat(chatReceived.idPengirim, chatReceived.chat, GraphicalUI.DATE_FORMAT.parse(chatReceived.timestamp).getTime());
-                                    this.chatRoomsData.put(chatReceived.idPengirim, chatRoomData);
-                                    ChatRoom.popChatWindow(chatRoomData, chatReceived.chatType, user.get().getId(), chatReceived.idPengirim, connSend, this);
+                                    this.groupChatRoomsData.put(chatReceived.idPenerima, chatRoomData);
+                                    ChatRoom.popChatWindow(chatRoomData, chatReceived.chatType, user.get().getId(), chatReceived.idPenerima, connSend, this);
                                 } else {
                                     chatRoomData.addGroupChat(chatReceived.idPengirim, chatReceived.chat, GraphicalUI.DATE_FORMAT.parse(chatReceived.timestamp).getTime());
                                 }
@@ -140,6 +142,18 @@ public class ConnectionReceiver implements Runnable {
                             };
                         }
                         break;
+                    case CREATE_GROUP:
+                        if (receivedPacket instanceof PacketCreateGroup) {
+                            PacketCreateGroup getOnlineServer = (PacketCreateGroup) receivedPacket;
+                            this.home.get().addGroupId(getOnlineServer.id_group);                        }
+                        break;                           
+                    case GET_GROUP_RESPONSE:
+                        if (receivedPacket instanceof PacketGetGroupResponse) {
+                            PacketGetGroupResponse getOnlineServer = (PacketGetGroupResponse) receivedPacket;
+                            this.home.get().clearGroupId();
+                            this.home.get().addAllGroupId(getOnlineServer.listGroupID);
+                        }
+                        break;                        
                     case GET_ONLINE_RESPONSE:
                         if (receivedPacket instanceof PacketGetOnlineResponse) {
                             PacketGetOnlineResponse getOnlineServer = (PacketGetOnlineResponse) receivedPacket;

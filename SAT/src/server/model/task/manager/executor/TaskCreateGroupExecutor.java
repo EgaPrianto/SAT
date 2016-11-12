@@ -37,6 +37,13 @@ public class TaskCreateGroupExecutor extends TaskExecutor {
         BufferedWriter bufferedWriter = null;
         try {
             PacketCreateGroup receivedPacket = (PacketCreateGroup) this.packet;
+            PacketCreateGroup sendPacket = new PacketCreateGroup(PacketType.CREATE_GROUP,
+                    this.connectedSockets.size(),
+                    SourceType.SERVER,
+                    receivedPacket.id_group,
+                    receivedPacket.nama,
+                    receivedPacket.idCreator,
+                    receivedPacket.listIDMember);
             ChatServerController.dbManager.insertGroup(receivedPacket.id_group, receivedPacket.nama);
             List<String> listIdMember = receivedPacket.listIDMember;
             ChatServerController.dbManager.insertUserToGroup(receivedPacket.id_group, receivedPacket.idCreator, "bakalKey");
@@ -44,14 +51,25 @@ public class TaskCreateGroupExecutor extends TaskExecutor {
                 ChatServerController.dbManager.insertUserToGroup(receivedPacket.id_group, string, "");
             }
             System.out.println("Sending notification to client Create Group : ");
+            //kirim ke creator
+            String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(receivedPacket.idCreator);
+            System.out.println("Current Ip addressPort = " + ipAddressPort + " " + this.connectedSockets.containsKey(ipAddressPort));
+            if (this.connectedSockets.containsKey(ipAddressPort)) {
+                Socket clientSocket = this.connectedSockets.get(ipAddressPort);
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                System.out.println("Packet to Client " + clientSocket.getRemoteSocketAddress().toString() + " Create Group: " + clientSocket.toString());
+                bufferedWriter.write(sendPacket.toString());
+                bufferedWriter.flush();
+            }
             //kasih tau ke semua id yang lagi terhubung kalo bikin group
             for (String string : listIdMember) {
-                String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(string);
-                if (this.connectedSockets.contains(ipAddressPort)) {
+                 ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(string);
+                System.out.println("Current Ip addressPort = " + ipAddressPort + " " + this.connectedSockets.containsKey(ipAddressPort));
+                if (this.connectedSockets.containsKey(ipAddressPort)) {
                     Socket clientSocket = this.connectedSockets.get(ipAddressPort);
                     bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                     System.out.println("Packet to Client " + clientSocket.getRemoteSocketAddress().toString() + " Create Group: " + clientSocket.toString());
-                    bufferedWriter.write(clientSocket.toString());
+                    bufferedWriter.write(sendPacket.toString());
                     bufferedWriter.flush();
                 }
             }

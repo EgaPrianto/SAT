@@ -52,4 +52,33 @@ public class Home extends Observable {
     }
     
     
+    public void removeGroupId(String id){
+//        onlineIds.remove(onlineIds.indexOf(id));
+        groupIds.remove(id);
+        setChanged();
+        notifyObservers();
+    }
+    public void addGroupId(String id){
+        groupIds.add(id);
+        setChanged();
+        notifyObservers();
+    }
+
+    public CopyOnWriteArrayList<String> getGroupIds() {
+        return groupIds;
+    }
+    
+    public void clearGroupId(){
+        groupIds.clear();
+        setChanged();
+        notifyObservers();
+    }
+    
+    public void addAllGroupId(Collection <? extends String> c){
+        groupIds.addAll(c);
+        setChanged();
+        notifyObservers();
+    }
+    
+    
 }

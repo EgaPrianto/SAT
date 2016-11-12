@@ -26,6 +26,7 @@ import javax.swing.Timer;
 import server.model.packet.ChatType;
 import server.model.packet.PacketChatSend;
 import server.model.packet.PacketCreateGroup;
+import server.model.packet.PacketGetGroupRequest;
 import server.model.packet.PacketGetOnlineRequest;
 import server.model.packet.PacketLogout;
 import server.model.packet.PacketType;
@@ -61,6 +62,11 @@ public class HomePage extends javax.swing.JPanel implements Observer {
                 SourceType.CLIENT,
                 connRecv.user.get().getId());
         connSend.addPacket(requestOnlineClient);
+        PacketGetGroupRequest requestGetGroup = new PacketGetGroupRequest(PacketType.GET_GROUP_REQUEST,
+                0,
+                SourceType.CLIENT,
+                connRecv.user.get().getId());
+        connSend.addPacket(requestGetGroup);
         this.gui = gui;
         this.connRecv = connRecv;
         this.connSend = connSend;
@@ -318,7 +324,7 @@ public class HomePage extends javax.swing.JPanel implements Observer {
     private void jButtonCreateNewGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreateNewGroupActionPerformed
         CreateGroupUI createGroup = new CreateGroupUI();
         int result = JOptionPane.showConfirmDialog(null, createGroup,
-                "Please Enter X and Y Values", JOptionPane.OK_CANCEL_OPTION);
+                "Please Enter Group Info", JOptionPane.OK_CANCEL_OPTION);
         if (result == JOptionPane.OK_OPTION) {
             String idGroup = createGroup.getjTextFieldIDGroup().getText();
             String groupName = createGroup.getjTextFieldGroupName().getText();
@@ -363,6 +369,10 @@ public class HomePage extends javax.swing.JPanel implements Observer {
             resetFriendList();
             for (int i = 0; i < update.getOnlineIds().size(); i++) {
                 addNewFriendList(update.getOnlineIds().get(i));
+            }
+            resetGroupList();
+            for (int i = 0; i < update.getGroupIds().size(); i++) {
+                addNewGroupList(update.getGroupIds().get(i));
             }
         }
     }

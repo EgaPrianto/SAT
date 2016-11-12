@@ -29,7 +29,7 @@ public class PacketFactory {
                 }
                 return new PacketCreateGroup(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], splitted[5], listID);
             case DEFAULT_RESPONSE:
-                return new PacketDefaultResponse(packetType,  Integer.parseInt(splitted[1]),
+                return new PacketDefaultResponse(packetType, Integer.parseInt(splitted[1]),
                         SourceType.valueOf(splitted[2]), splitted[3]);
             case GET_CHAT_CLIENT:
                 return new PacketGetChatClient(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], Long.parseLong(splitted[5]));
@@ -42,6 +42,13 @@ public class PacketFactory {
                     listID.add(splitted[i]);
                 }
                 return new PacketGetOnlineResponse(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), listID);
+            case GET_GROUP_REQUEST:
+                return new PacketGetGroupRequest(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3]);
+            case GET_GROUP_RESPONSE:
+                for (int i = 3; i < splitted.length; i++) {
+                    listID.add(splitted[i]);
+                }
+                return new PacketGetGroupResponse(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), listID);
             case GOT_ONLINE:
                 return new PacketGotOnline(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], Integer.parseInt(splitted[5]));
             case LOGIN_REQUEST:
@@ -49,7 +56,7 @@ public class PacketFactory {
             case LOGIN_RESPONSE:
                 return new PacketLoginResponse(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), LoginResponseType.valueOf(splitted[3]), splitted[4]);
             case LOGIN_SERVER:
-                return new PacketLoginServer(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3],splitted[4],splitted[5]);
+                return new PacketLoginServer(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], splitted[5]);
             case LOGOUT:
                 return new PacketLogout(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3]);
             case REGISTER:

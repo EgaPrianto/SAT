@@ -87,7 +87,8 @@ public class JDBCMySQLManager {
     }
 
     public List<String> getAllMemberIdGroup(String idGroup) throws SQLException {
-        String sql = "SELECT `id_member` FROM `user_group` WHERE `id_group` != '" + idGroup + "'";
+        String sql = "SELECT `id_member` FROM `user_group` WHERE `id_group` = '" + idGroup + "'";
+        System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);
         List<String> result = new ArrayList<>();
         while (rs.next()) {
@@ -165,6 +166,7 @@ public class JDBCMySQLManager {
 
     public void insertUserToGroup(String idGroup, String idUser, String publicKey) throws SQLException {
         PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES (?, ?, ?)");
+        System.out.println("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES ("+idGroup+", "+idUser+", "+publicKey+")");
         preparedStatement.setString(1, idGroup);
         preparedStatement.setString(2, idUser);
         preparedStatement.setString(3, publicKey);
