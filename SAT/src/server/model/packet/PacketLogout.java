@@ -12,15 +12,17 @@ package server.model.packet;
 public class PacketLogout extends Packet {
 
     public String id;
+    public String timestamp;
 
-    public PacketLogout(PacketType command, int serverLoad, SourceType sourceType, String id) {
+    public PacketLogout(PacketType command, int serverLoad, SourceType sourceType, String id,String timestamp) {
         super(command, serverLoad, sourceType);
         this.id=id;
+        this.timestamp = timestamp;
     }
 
     @Override
     public String getBodyData() {
-        return id;
+        return id+";"+timestamp;
     }
 
 }

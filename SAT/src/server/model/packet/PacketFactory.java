@@ -66,7 +66,7 @@ public class PacketFactory {
             case LOGIN_SERVER:
                 return new PacketLoginServer(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], splitted[5]);
             case LOGOUT:
-                return new PacketLogout(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3]);
+                return new PacketLogout(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3],splitted[4]);
             case REGISTER:
                 return new PacketRegister(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], splitted[4], splitted[5]);
         }

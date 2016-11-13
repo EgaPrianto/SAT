@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -36,11 +37,14 @@ public class TaskLogoutExecutor extends TaskExecutor {
         try {
             PacketLogout packetLogout = (PacketLogout) this.packet;
             ChatServerController.dbManager.updateStatusUser(packetLogout.id, "offline");
+            long curTime = System.currentTimeMillis();
+            Date currentDate = new Date(curTime);
+            ChatServerController.dbManager.updateLastLogoutUser(packetLogout.id, ChatServerController.dbManager.DATE_FORMAT.format(currentDate));
             BufferedWriter bufferedWriter;
             //broadcast info logout
             System.out.println("Broadcasting notification logout to connected client");
             String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(packetLogout.id);
-            PacketLogout packetNotifyLogout = new PacketLogout(PacketType.LOGOUT, this.connectedSockets.size(), SourceType.SERVER, packetLogout.id);
+            PacketLogout packetNotifyLogout = new PacketLogout(PacketType.LOGOUT, this.connectedSockets.size(), SourceType.SERVER, packetLogout.id, packetLogout.timestamp);
             for (Socket clientSocketNotification : connectedSockets.values()) {
                 if (!clientSocketNotification.getRemoteSocketAddress().toString().substring(1).equals(ipAddressPort)) {
                     System.out.println("notification target client : " + clientSocketNotification.getRemoteSocketAddress().toString());
@@ -51,7 +55,7 @@ public class TaskLogoutExecutor extends TaskExecutor {
             }
             if (packetLogout.sourceType == SourceType.CLIENT) {
                 //propagate server
-                Packet packetPropagation = new PacketLogout(PacketType.LOGOUT, this.connectedSockets.size(), SourceType.SERVER, packetLogout.id);
+                Packet packetPropagation = new PacketLogout(PacketType.LOGOUT, this.connectedSockets.size(), SourceType.SERVER, packetLogout.id, packetLogout.timestamp);
                 for (Socket connectedServerSocket : connectedServerSockets) {
                     bufferedWriter = new BufferedWriter(new OutputStreamWriter(connectedServerSocket.getOutputStream()));
                     System.out.println("Sending to server " + connectedServerSocket.getRemoteSocketAddress().toString() + " :" + packetPropagation.toString());

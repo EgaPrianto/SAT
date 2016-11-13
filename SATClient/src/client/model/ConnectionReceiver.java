@@ -176,7 +176,7 @@ public class ConnectionReceiver implements Runnable {
                     case DEFAULT_RESPONSE:
                         if (receivedPacket instanceof PacketDefaultResponse) {
                             PacketDefaultResponse getResponse = (PacketDefaultResponse) receivedPacket;
-                            JOptionPane.showConfirmDialog(null, getResponse.response, "Server Response", JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showConfirmDialog(null, getResponse.response, "Server Response", JOptionPane.CLOSED_OPTION, JOptionPane.INFORMATION_MESSAGE);
                         }
                         break;
 

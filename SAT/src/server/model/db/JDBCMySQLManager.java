@@ -304,4 +304,10 @@ public class JDBCMySQLManager {
         System.out.println("Executing Query = " + sql);
         stmt.executeUpdate(sql);
     }
+    
+    public void updateLastLogoutUser(String id, String timestamp) throws SQLException {
+        String sql = "UPDATE `user_sat` SET `last_login` ='" + timestamp + "' WHERE `user_sat`.`id` = '" + id + "'";
+        System.out.println("Executing Query = " + sql);
+        stmt.executeUpdate(sql);
+    }
 }

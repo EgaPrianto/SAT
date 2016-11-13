@@ -21,6 +21,8 @@ import server.model.db.JDBCMySQLManager;
 import server.model.packet.ChatType;
 import server.model.packet.Packet;
 import server.model.packet.PacketChatSend;
+import server.model.packet.PacketDefaultResponse;
+import server.model.packet.PacketType;
 import server.model.packet.SourceType;
 
 /**
@@ -49,6 +51,15 @@ public class TaskChatSendExecutor extends TaskExecutor {
                     receivedPacket.chat,
                     receivedPacket.timestamp
             );
+            if (receivedPacket.sourceType == SourceType.CLIENT) {
+                //kirim response ke user
+                String ipAddressPortUser = ChatServerController.dbManager.getIpAddressPortUser(receivedPacket.idPengirim);
+                PacketDefaultResponse packetResponse = new PacketDefaultResponse(PacketType.DEFAULT_RESPONSE, this.connectedSockets.size(), SourceType.SERVER, "Message Sent!");
+                Socket responseSocket = this.connectedSockets.get(ipAddressPortUser);
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(responseSocket.getOutputStream()));
+                bufferedWriter.write(packetResponse.toString());
+                bufferedWriter.flush();
+            }
             if (receivedPacket.chatType == ChatType.GROUP) {
                 System.out.println("Inserting Chat to GroupChat Database");
                 ChatServerController.dbManager.insertChatGroup(receivedPacket.idPengirim, receivedPacket.idPenerima, receivedPacket.chat, receivedPacket.timestamp);
@@ -66,7 +77,7 @@ public class TaskChatSendExecutor extends TaskExecutor {
                 for (String memberId : memberIds) {
                     String ipAddressPort = ChatServerController.dbManager.getIpAddressPortUser(memberId);
                     System.out.println("Pengirim tidak sama dengan penerima ?" + !memberId.equals(receivedPacket.idPengirim));
-                    System.out.println("ada client yang terhubung? "+  this.connectedSockets.containsKey(ipAddressPort));
+                    System.out.println("ada client yang terhubung? " + this.connectedSockets.containsKey(ipAddressPort));
                     if (!memberId.equals(receivedPacket.idPengirim) && this.connectedSockets.containsKey(ipAddressPort)) {
                         Socket clientSocket = this.connectedSockets.get(ipAddressPort);
                         bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));

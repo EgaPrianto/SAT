@@ -73,7 +73,9 @@ public class HomePage extends javax.swing.JPanel implements Observer {
         this.gui.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId());
+                long currTime = System.currentTimeMillis();
+                Date currentDate = new Date(currTime);
+                PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId(), GraphicalUI.DATE_FORMAT.format(currentDate));
                 connSend.addPacket(packetLoggingout);
                 System.exit(0);
 
@@ -287,7 +289,10 @@ public class HomePage extends javax.swing.JPanel implements Observer {
 
     private void jButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogoutActionPerformed
         try {
-            PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId());
+
+            long currTime = System.currentTimeMillis();
+            Date currentDate = new Date(currTime);
+            PacketLogout packetLoggingout = new PacketLogout(PacketType.LOGOUT, 0, SourceType.CLIENT, connRecv.user.get().getId(), GraphicalUI.DATE_FORMAT.format(currentDate));
             connSend.addPacket(packetLoggingout);
             this.connRecv.home.get().deleteObservers();
             this.connRecv.broadcastRoomData.get().deleteObservers();
