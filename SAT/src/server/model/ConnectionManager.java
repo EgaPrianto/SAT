@@ -129,6 +129,9 @@ public class ConnectionManager implements Runnable {
                     bufferedWriter.flush();
                     System.out.println("Adding server to socket");
                     this.connectedServerSockets.add(serverSocket);//adding server socket connection
+                    ConnectionReceiver newConnection = new ConnectionReceiver(serverSocket, this.packetQueue);
+                    this.connectionReceivers.add(newConnection);
+                    newConnection.start();
                 } catch (ConnectException ex) {
                     //not connected do nothing
                 }
@@ -156,9 +159,11 @@ public class ConnectionManager implements Runnable {
                 } else if (packetGotOnline.sourceType == SourceType.SERVER) {
                     //server
                     System.out.println("Server Connected " + packetGotOnline.id + " at " + packetGotOnline.ipAddress + " : " + packetGotOnline.toString());
-                    createServerConnection(packetGotOnline.ipAddress, packetGotOnline.port);
+//                    createServerConnection(packetGotOnline.ipAddress, packetGotOnline.port);
+                    System.out.println("Adding server to socket");
+                    this.connectedServerSockets.add(clientSocket);//adding server socket connection
                     createServerConnectionReceiver(clientSocket);
-                    ChatServerController.dbManager.insertServer(packetGotOnline.id, packetGotOnline.ipAddress, packetGotOnline.port);
+//                    ChatServerController.dbManager.insertServer(packetGotOnline.id, packetGotOnline.ipAddress, packetGotOnline.port);
                 } else {
                     clientSocket.close();
                     //command wrong close connection

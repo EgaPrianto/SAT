@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.model.packet.ChatType;
+import server.model.packet.PacketType;
+import server.model.packet.SourceType;
 
 /**
  *
@@ -73,6 +76,44 @@ public class JDBCMySQLManager {
         String result = rs.getString("id");
         rs.close();
         return result;
+    }
+
+    public List<String> getChats(ChatType chatType, String idPengirim, String idPenerima, String timestamp) throws SQLException {
+
+        List<String> result = new ArrayList<>();
+        String sql;
+        ResultSet rs;
+        switch (chatType) {
+            case BROADCAST:
+                sql = "SELECT `id_sender`, `id_receiver`, `chat_message`, `datetime` FROM `chat` WHERE `datetime` >= '" + timestamp + "' AND `id_sender` = '" + idPengirim + "' AND `id_receiver` ='broadcast'";
+                System.out.println("Executing query : " + sql);
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    String string = PacketType.CHAT_SEND + ";0;" + SourceType.SERVER + ";" + chatType + ";" + idPengirim + ";broadcast;" + rs.getString("chat_message") + ";" + rs.getString("datetime");
+                    result.add(string);
+                }
+                return result;
+            case GROUP:
+                sql = "SELECT `id_sender`, `id_group`, `chat_message`, `datetime` FROM `group_chat` WHERE `datetime` >= '" + timestamp + "' AND `id_sender` = '" + idPengirim + "' AND `id_group` ='" + idPenerima + "'";
+                System.out.println("Executing query : " + sql);
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    String string = PacketType.CHAT_SEND + ";0;" + SourceType.SERVER + ";" + chatType + ";" + idPengirim + ";" + idPenerima + ";" + rs.getString("chat_message") + ";" + rs.getString("datetime");
+                    result.add(string);
+                }
+                return result;
+            case PRIVATE:
+                sql = "SELECT `id_sender`, `id_receiver`, `chat_message`, `datetime` FROM `chat` WHERE `datetime` >= '" + timestamp + "' AND `id_sender` = '" + idPengirim + "' AND `id_receiver` ='" + idPenerima + "'";
+                System.out.println("Executing query : " + sql);
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    String string = PacketType.CHAT_SEND + ";0;" + SourceType.SERVER + ";" + chatType + ";" + idPengirim + ";" + idPenerima + ";" + rs.getString("chat_message") + ";" + rs.getString("datetime");
+                    result.add(string);
+                }
+                return result;
+            default:
+                return null;
+        }
     }
 
     public List<String> getAllIpAddressServer() throws SQLException {
@@ -166,7 +207,7 @@ public class JDBCMySQLManager {
 
     public void insertUserToGroup(String idGroup, String idUser, String publicKey) throws SQLException {
         PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES (?, ?, ?)");
-        System.out.println("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES ("+idGroup+", "+idUser+", "+publicKey+")");
+        System.out.println("INSERT INTO `user_group` (`id_group`, `id_member`, `public_key`) VALUES (" + idGroup + ", " + idUser + ", " + publicKey + ")");
         preparedStatement.setString(1, idGroup);
         preparedStatement.setString(2, idUser);
         preparedStatement.setString(3, publicKey);
@@ -229,7 +270,7 @@ public class JDBCMySQLManager {
         rs.close();
         return result;
     }
-    
+
     public ArrayList<String> getGroups(String id) throws SQLException {
         String sql = "SELECT `id_group` FROM `user_group` WHERE `id_member` = '" + id + "'";
         System.out.println(sql);

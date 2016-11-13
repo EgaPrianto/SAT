@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import server.model.packet.Packet;
 import server.model.packet.PacketChatSend;
 import server.model.packet.PacketCreateGroup;
+import server.model.packet.PacketGetChatRequest;
 import server.model.packet.PacketGetGroupRequest;
 import server.model.packet.PacketGetOnlineRequest;
 import server.model.packet.PacketLoginRequest;
@@ -23,6 +24,7 @@ import server.model.packet.PacketRegister;
 import server.model.task.manager.executor.TaskChatSendExecutor;
 import server.model.task.manager.executor.TaskCreateGroupExecutor;
 import server.model.task.manager.executor.TaskExecutor;
+import server.model.task.manager.executor.TaskGetChatExecutor;
 import server.model.task.manager.executor.TaskGetGroupExecutor;
 import server.model.task.manager.executor.TaskGetOnlineExecutor;
 import server.model.task.manager.executor.TaskLoginExecutor;
@@ -102,6 +104,12 @@ public class TaskManager implements Runnable {
                             if (newPacket instanceof PacketRegister) {
                                 System.out.println("Task Register Assigned");
                                 new TaskRegisterExecutor(connectedSockets, connectedServerSockets, newPacket).start();                                
+                            }
+                            break;
+                        case GET_CHAT_REQUEST:
+                            if (newPacket instanceof PacketGetChatRequest) {
+                                System.out.println("Task Get Chat Assigned");
+                                new TaskGetChatExecutor(connectedSockets, connectedServerSockets, newPacket).start();                                
                             }
                             break;
                     }

@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import server.model.db.JDBCMySQLManager;
 import server.model.packet.Packet;
 import server.model.packet.PacketFactory;
+import server.model.packet.PacketGetChatRequest;
 import server.model.packet.PacketGetGroupRequest;
 import server.model.packet.PacketGetOnlineRequest;
 import server.model.packet.PacketLoginRequest;
@@ -84,7 +85,14 @@ public class ConnectionReceiver implements Runnable {
                             packetGetGroupRequest.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
                             packetQueue.add(packetGetGroupRequest);
                         }
-                        break;                        
+                        break;           
+                    case GET_CHAT_REQUEST:
+                        if (packet instanceof PacketGetChatRequest) {
+                            PacketGetChatRequest packetGetChatRequest=  (PacketGetChatRequest) packet;
+                            packetGetChatRequest.ipAddressPort = this.socket.getRemoteSocketAddress().toString().substring(1);
+                            packetQueue.add(packetGetChatRequest);
+                        }
+                        break;           
                     default:
                         packetQueue.add(packet);
                         break;
