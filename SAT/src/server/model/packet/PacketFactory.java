@@ -33,16 +33,16 @@ public class PacketFactory {
                 return new PacketDefaultResponse(packetType, Integer.parseInt(splitted[1]),
                         SourceType.valueOf(splitted[2]), splitted[3]);
             case GET_CHAT_REQUEST:
-                return new PacketGetChatRequest(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), ChatType.valueOf(splitted[3]), splitted[4], splitted[5], Long.parseLong(splitted[6]));
+                return new PacketGetChatRequest(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), ChatType.valueOf(splitted[3]), splitted[4], splitted[5], splitted[6]);
             case GET_CHAT_RESPONSE:
                 List<PacketChatSend> chats = new ArrayList<>();
-                for (int i = 4; i < splitted.length; i+=5) {
+                for (int i = 3; i < splitted.length; i += 5) {
                     PacketChatSend chat = new PacketChatSend(packetType, Integer.parseInt(splitted[1]),
-                        SourceType.valueOf(splitted[2]), ChatType.valueOf(splitted[i]),
-                        splitted[i+1], splitted[i+2], splitted[i+3], splitted[i+4]);
+                            SourceType.valueOf(splitted[2]), ChatType.valueOf(splitted[i]),
+                            splitted[i + 1], splitted[i + 2], splitted[i + 3], splitted[i + 4]);
                     chats.add(chat);
                 }
-                return new PacketGetChatResponse(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3], chats);
+                return new PacketGetChatResponse(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), chats);
             case GET_ONLINE_REQUEST:
                 return new PacketGetOnlineRequest(packetType, Integer.parseInt(splitted[1]), SourceType.valueOf(splitted[2]), splitted[3]);
             case GET_ONLINE_RESPONSE:

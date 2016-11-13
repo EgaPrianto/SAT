@@ -14,12 +14,10 @@ import java.util.List;
 public class PacketGetChatResponse extends Packet {
 
     public List<PacketChatSend> chats;
-    public String timestamp;
 
-    public PacketGetChatResponse(PacketType command, int serverLoad, SourceType sourceType, String timestamp, List<PacketChatSend> chats) {
+    public PacketGetChatResponse(PacketType command, int serverLoad, SourceType sourceType, List<PacketChatSend> chats) {
         super(command, serverLoad, sourceType);
         this.chats = chats;
-        this.timestamp = timestamp;
     }
 
     @Override
@@ -30,8 +28,8 @@ public class PacketGetChatResponse extends Packet {
             hasil += ";";
         }
         if (!chats.isEmpty()) {
-            hasil = hasil.substring(0, hasil.length()-1);
+            hasil = hasil.substring(0, hasil.length() - 1);
         }
-        return timestamp + ";" + hasil;
+        return hasil;
     }
 }

@@ -14,10 +14,10 @@ public class PacketGetChatRequest extends Packet {
     public String id_pengirim;
     public String id_penerima;
     public ChatType chatType;
-    public long timestamp;
+    public String timestamp;
     public String ipAddressPort;
 
-    public PacketGetChatRequest(PacketType command, int serverLoad, SourceType sourceType, ChatType chatType, String id_pengirim, String id_penerima, long timestamp) {
+    public PacketGetChatRequest(PacketType command, int serverLoad, SourceType sourceType, ChatType chatType, String id_pengirim, String id_penerima, String timestamp) {
         super(command, serverLoad, sourceType);
         this.chatType = chatType;
         this.id_penerima = id_penerima;
