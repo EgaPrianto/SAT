@@ -8,13 +8,11 @@ package server.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.model.db.JDBCMySQLManager;
 import server.model.packet.Packet;
 import server.model.packet.PacketFactory;
 import server.model.packet.PacketGetChatRequest;
@@ -99,7 +97,8 @@ public class ConnectionReceiver implements Runnable {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(ConnectionReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                ConnectionManager.connectionReceivers.remove(socket);
+            } 
         }
     }
 

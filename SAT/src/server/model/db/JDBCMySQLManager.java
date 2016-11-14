@@ -216,7 +216,7 @@ public class JDBCMySQLManager {
     }
 
     public String getIpAddressPortUser(String id) throws SQLException {
-        String sql = "SELECT `ip_address_port` FROM `user_sat` WHERE `id`='" + id + "'";
+        String sql = "SELECT `ip_address_port` FROM `user_sat` WHERE `id` = '" + id + "'";
         System.out.println("Print query ipAddress user :");
         System.out.println(sql);
         ResultSet rs = stmt.executeQuery(sql);

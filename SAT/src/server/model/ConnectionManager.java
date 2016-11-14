@@ -15,6 +15,7 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class ConnectionManager implements Runnable {
     private CopyOnWriteArrayList<String> serverList;
     private ConcurrentHashMap<String, Socket> connectedSockets;
     private CopyOnWriteArrayList<Socket> connectedServerSockets;
-    private CopyOnWriteArrayList<ConnectionReceiver> connectionReceivers;
+    public static CopyOnWriteArrayList<ConnectionReceiver> connectionReceivers;
     private ConcurrentLinkedQueue<Packet> packetQueue;
 
     public ConnectionManager(ConcurrentHashMap<String, Socket> connectedSockets, CopyOnWriteArrayList<Socket> connectedServerSockets, ConcurrentLinkedQueue<Packet> packetQueue) throws IOException {
@@ -121,6 +122,7 @@ public class ConnectionManager implements Runnable {
                 String[] splitted = string.split(":");
                 int port = Integer.parseInt(splitted[1]);
                 try {
+                    System.out.println("ServerSocket = " + splitted[0] + " port " + port);
                     Socket serverSocket = new Socket(splitted[0], port);
                     Packet packet = new PacketGotOnline(PacketType.GOT_ONLINE, this.connectedSockets.size(), SourceType.SERVER, ConsoleUI.idServer, serverSocket.getLocalAddress().toString().substring(1), PORT);
                     BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
@@ -134,6 +136,8 @@ public class ConnectionManager implements Runnable {
                     newConnection.start();
                 } catch (ConnectException ex) {
                     //not connected do nothing
+                } catch (SocketException ex){
+                    //network not available do nothing
                 }
             }
             while (!isFinish) {
